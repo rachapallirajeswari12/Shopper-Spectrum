@@ -40,7 +40,8 @@ st.subheader("Customer Segmentation & Product Recommendation System")
 def load_data():
 
     df = pd.read_csv(
-        "online_retail.csv",
+        "compressed_data.csv.gz",
+        compression="gzip",
         encoding="latin1"
     )
 
@@ -55,33 +56,23 @@ def load_data():
         ~df["InvoiceNo"].astype(str).str.startswith("C")
     ]
 
-    # Remove invalid quantity & price
+    # Remove invalid Quantity and Price
     df = df[
         (df["Quantity"] > 0) &
         (df["UnitPrice"] > 0)
     ]
 
+    # Convert data types
     df["CustomerID"] = df["CustomerID"].astype(int)
-
     df["InvoiceDate"] = pd.to_datetime(
         df["InvoiceDate"],
         dayfirst=True
     )
 
-    df["TotalAmount"] = (
-        df["Quantity"] *
-        df["UnitPrice"]
-    )
-
     # Feature Engineering
-
-    df["Year"] = df["InvoiceDate"].dt.year
-    df["Month"] = df["InvoiceDate"].dt.month
-    df["Day"] = df["InvoiceDate"].dt.day
-    df["Hour"] = df["InvoiceDate"].dt.hour
+    df["TotalAmount"] = df["Quantity"] * df["UnitPrice"]
 
     return df
-
 
 df = load_data()
 
